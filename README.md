@@ -12,7 +12,7 @@ Firefox 57.0 + [Violentmonkey 2.8.18](https://addons.mozilla.org/ja/firefox/addo
 
 アイコン（左下にチラッと見える黄色いやつ）を押下してメッセージを表示した様子。
 
-![画面キャプチャー（赤背景のブロック内に行数やメッセージが一覧表で表示されている）](https://user-images.githubusercontent.com/4138486/32880474-28171f10-caf1-11e7-9198-c1718904cba6.png)
+![画面キャプチャー（赤背景のブロック内に行数やメッセージが一覧表で表示されている）](https://user-images.githubusercontent.com/4138486/32881270-118ecf1a-caf4-11e7-9e63-33b6a0d8fdfa.png)
 
 ## おことわり
 
