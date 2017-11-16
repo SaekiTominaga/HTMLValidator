@@ -3,7 +3,7 @@
 // @namespace   https://w0s.jp/
 // @description Nu Html Checker を利用して HTML ページのチェックを行うユーザースクリプト
 // @author      SaekiTominaga
-// @version     1.0.0
+// @version     1.0.1
 // ==/UserScript==
 (() => {
 	const CHECKER_URL = 'https://checker.html5.org/'; // バリデーターの URL
@@ -59,14 +59,17 @@
 		.` + CLASSNAME_PLEFIX + `error_box {
 			padding: 1em;
 			border: 1px solid #f00;
+			box-sizing: border-box;
 			box-shadow: 0 0 1em #999;
 			position: fixed;
 			left: 20px;
 			bottom: 20px;
+			max-height: calc(100vh - 20px);
 			color: #000;
 			background: #fee;
-			font-size: 80%;
+			font-size: 14px;
 			outline: none;
+			overflow-y: auto;
 			z-index: 2147483647;
 		}
 
@@ -77,10 +80,11 @@
 		.` + CLASSNAME_PLEFIX + `error_list {
 			margin-bottom: 1em;
 			border-collapse: collapse;
+			font-size: inherit;
 		}
 
 		.` + CLASSNAME_PLEFIX + `error_list td {
-			padding: .5em;
+			padding: .25em .5em;
 			border: 1px solid #000;
 			background: #fff;
 		}
@@ -106,6 +110,7 @@
 
 	const iconButtonElement = document.createElement('button');
 	iconButtonElement.type = 'button';
+	iconButtonElement.disabled = true;
 	iconButtonElement.className = CLASSNAME_PLEFIX + 'icon_button';
 	iconButtonWrapperElement.appendChild(iconButtonElement);
 
@@ -136,8 +141,6 @@
 			const responseMessages = responseData.messages;
 			if (responseMessages.length === 0) {
 				/* メッセージがない時（Success） */
-				iconButtonElement.disabled = true;
-
 				iconElement.src = ICON_SUCCESS_DATA;
 				iconElement.alt = 'Success';
 			} else {
@@ -199,6 +202,7 @@
 					iconButtonElement.focus();
 				});
 
+				iconButtonElement.disabled = false;
 				if (!types.includes('error')) {
 					/* Info または Warning のみの時 */
 					iconElement.src = ICON_WARNING_DATA;
