@@ -3,7 +3,7 @@
 // @namespace   https://w0s.jp/
 // @description Nu Html Checker を利用して HTML ページのチェックを行うユーザースクリプト
 // @author      SaekiTominaga
-// @version     1.0.1
+// @version     1.1.0
 // ==/UserScript==
 (() => {
 	const CHECKER_URL = 'https://checker.html5.org/'; // バリデーターの URL
@@ -18,7 +18,7 @@
 	/* スタイルを CSS で設定 */
 	const styleElement = document.createElement('style');
 	styleElement.textContent = `
-		.` + CLASSNAME_PLEFIX + `icon_button {
+		.${CLASSNAME_PLEFIX}icon_button {
 			margin: 0; /* for Chrome */
 			padding: 0;
 			border: none;
@@ -33,30 +33,30 @@
 			z-index: 2147483647;
 		}
 
-		.` + CLASSNAME_PLEFIX + `icon_button:not([disabled]) {
+		.${CLASSNAME_PLEFIX}icon_button:not([disabled]) {
 			cursor: pointer;
 		}
 
-		.` + CLASSNAME_PLEFIX + `icon_button:-focus {
+		.${CLASSNAME_PLEFIX}icon_button:-focus {
 			outline: 1px dotted;
 		} /* for Firefox */
 
-		.` + CLASSNAME_PLEFIX + `icon_button:-moz-focusring {
+		.${CLASSNAME_PLEFIX}icon_button:-moz-focusring {
 			outline: 1px dotted;
 		} /* for Firefox */
 
-		.` + CLASSNAME_PLEFIX + `icon_button::-moz-focus-inner {
+		.${CLASSNAME_PLEFIX}icon_button::-moz-focus-inner {
 			padding: 0;
 			border: none;
 		} /* for Firefox */
 
-		.` + CLASSNAME_PLEFIX + `icon_button img {
+		.${CLASSNAME_PLEFIX}icon_button img {
 			display: block;
 			height: 40px;
 			width: 40px;
 		}
 
-		.` + CLASSNAME_PLEFIX + `error_box {
+		.${CLASSNAME_PLEFIX}error_box {
 			padding: 1em;
 			border: 1px solid #f00;
 			box-sizing: border-box;
@@ -73,50 +73,50 @@
 			z-index: 2147483647;
 		}
 
-		.` + CLASSNAME_PLEFIX + `error_box[hidden] {
+		.${CLASSNAME_PLEFIX}error_box[hidden] {
 			display: none;
 		}
 
-		.` + CLASSNAME_PLEFIX + `error_list {
+		.${CLASSNAME_PLEFIX}error_list {
 			margin-bottom: 1em;
 			border-collapse: collapse;
 			font-size: inherit;
 		}
 
-		.` + CLASSNAME_PLEFIX + `error_list td {
+		.${CLASSNAME_PLEFIX}error_list td {
 			padding: .25em .5em;
 			border: 1px solid #000;
 			background: #fff;
 		}
 
-		.` + CLASSNAME_PLEFIX + `error_type {
+		.${CLASSNAME_PLEFIX}error_type {
 			font-weight: bold;
 			text-transform: capitalize;
 		}
 
-		.` + CLASSNAME_PLEFIX + `error_line {
+		.${CLASSNAME_PLEFIX}error_line {
 			text-align: right;
 		}
 
-		.` + CLASSNAME_PLEFIX + `error_message {
+		.${CLASSNAME_PLEFIX}error_message {
 		}
 	`;
 	document.head.appendChild(styleElement);
 
 	/* バリデート結果ボタン */
 	const iconButtonWrapperElement = document.createElement('div');
-	iconButtonWrapperElement.className = CLASSNAME_PLEFIX + 'icon_button_box';
+	iconButtonWrapperElement.className = `${CLASSNAME_PLEFIX}icon_button_box`;
 	document.body.appendChild(iconButtonWrapperElement);
 
 	const iconButtonElement = document.createElement('button');
 	iconButtonElement.type = 'button';
 	iconButtonElement.disabled = true;
-	iconButtonElement.className = CLASSNAME_PLEFIX + 'icon_button';
+	iconButtonElement.className = `${CLASSNAME_PLEFIX}icon_button`;
 	iconButtonWrapperElement.appendChild(iconButtonElement);
 
 	const iconElement = document.createElement('img');
 	iconElement.src = ICON_LOADING_DATA; // アイコンの初期表示はロード中にする
-	iconElement.alt = '結果取得待ち'; // アイコンの初期表示はロード中にする
+	iconElement.alt = 'Loading'; // アイコンの初期表示はロード中にする
 	iconButtonElement.appendChild(iconElement);
 
 	/* アクセスしているページのソースコードを取得する */
@@ -148,11 +148,15 @@
 				const errorBoxElement = document.createElement('div');
 				errorBoxElement.hidden = true;
 				errorBoxElement.tabIndex = -1;
-				errorBoxElement.className = CLASSNAME_PLEFIX + 'error_box';
+				errorBoxElement.lang = 'en';
+				if (document.documentElement.hasAttribute('xmlns')) { // TODO 本当は Content-Type で判定すべき
+					errorBoxElement.setAttribute('xml:lang', 'en');
+				}
+				errorBoxElement.className = `${CLASSNAME_PLEFIX}error_box`;
 				document.body.appendChild(errorBoxElement);
 
 				const errorTableElement = document.createElement('table');
-				errorTableElement.className = CLASSNAME_PLEFIX + 'error_list';
+				errorTableElement.className = `${CLASSNAME_PLEFIX}error_list`;
 				errorBoxElement.appendChild(errorTableElement);
 
 				const errorTbodyElement = document.createElement('tbody');
@@ -168,17 +172,17 @@
 					errorTbodyElement.appendChild(errorTrElement);
 
 					const errorTypeElement = document.createElement('td');
-					errorTypeElement.className = CLASSNAME_PLEFIX + 'error_type';
+					errorTypeElement.className = `${CLASSNAME_PLEFIX}error_type`;
 					errorTypeElement.textContent = type;
 					errorTrElement.appendChild(errorTypeElement);
 
 					const errorLineElement = document.createElement('td');
-					errorLineElement.className = CLASSNAME_PLEFIX + 'error_line';
+					errorLineElement.className = `${CLASSNAME_PLEFIX}error_line`;
 					errorLineElement.textContent = responseMessage.lastLine;
 					errorTrElement.appendChild(errorLineElement);
 
 					const errorMessageElement = document.createElement('td');
-					errorMessageElement.className = CLASSNAME_PLEFIX + 'error_message';
+					errorMessageElement.className = `${CLASSNAME_PLEFIX}error_message`;
 					errorMessageElement.textContent = responseMessage.message;
 					errorTrElement.appendChild(errorMessageElement);
 				}
@@ -186,8 +190,8 @@
 				/* 閉じるボタン */
 				const closeButtonElement = document.createElement('button');
 				closeButtonElement.type = 'button';
-				closeButtonElement.className = CLASSNAME_PLEFIX + 'error_close_button';
-				closeButtonElement.textContent = '閉じる';
+				closeButtonElement.className = `${CLASSNAME_PLEFIX}error_close_button`;
+				closeButtonElement.textContent = 'Close';
 				errorBoxElement.appendChild(closeButtonElement);
 
 				/* バリデート結果ボタンをクリックしたらメッセージを表示する */
