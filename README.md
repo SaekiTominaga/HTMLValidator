@@ -16,7 +16,7 @@ Nu Html Checker を利用して HTML ページのチェックを行うユーザ�
 
 ## 動作サンプル
 
-- [サンプルページ](sample.html)
+- [サンプルページ](https://saekitominaga.github.io/HTMLValidator/sample.html)
 
 ## 注意事項
 
