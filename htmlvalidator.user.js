@@ -1,9 +1,10 @@
 // ==UserScript==
 // @name        HTML Validator
 // @namespace   https://w0s.jp/
+// @grant       GM_getValue
 // @description Nu Html Checker を利用して HTML ページのチェックを行うユーザースクリプト
 // @author      SaekiTominaga
-// @version     2.0.0
+// @version     2.1.0
 // ==/UserScript==
 (async () => {
 	/* バリデーターの URL リスト（上から順にアクセスを試みる） */
@@ -12,6 +13,9 @@
 		'https://validator.w3.org/nu/',
 		'https://validator.nu/'
 	];
+
+	/* 除外するエラー、警告メッセージの正規表現文字列 https://github.com/validator/validator/wiki/Message-filtering#using-the---filterpattern-option */
+	const FILTER_PATTERN = '';
 
 	/* クラス名の接頭辞 */
 	const CLASSNAME_PLEFIX = 'htmlvalidator-';
@@ -38,6 +42,7 @@
 		.${CLASSNAME_PLEFIX}icon-box :focus,
 		.${CLASSNAME_PLEFIX}validate-box :focus {
 			outline: 1px solid #4d90fe;
+			outline-offset: 2px;
 		}
 
 		.${CLASSNAME_PLEFIX}icon-box ::-moz-focus-inner,
@@ -153,6 +158,8 @@
 		}
 	`;
 
+	const supportGMgetValue = window.GM_getValue !== undefined; // GM_getValue() をサポートしているか
+
 	/* アクセスしているページのソースコードを取得する */
 	try {
 		const response = await fetch(location, {
@@ -217,16 +224,28 @@
 		});
 
 		/* バリデートサービスへソースコードを送信する */
+		const filterPattern = supportGMgetValue ? GM_getValue('FILTER_PATTERN', FILTER_PATTERN) : FILTER_PATTERN;
+
 		const formData = new FormData();
 		formData.append('out', 'json');
+		if (filterPattern !== '') {
+			formData.append('filterpattern', filterPattern);
+		}
 		formData.append('content', sourceCode);
 
-		for (const url of CHECKER_URL) {
+		for (const url of supportGMgetValue ? GM_getValue('CHECKER_URL', CHECKER_URL) : CHECKER_URL) {
 			try {
 				const response = await fetch(url, {
 					method: 'POST',
 					body: formData
 				});
+
+				if (!response.ok) {
+					throw new Error(`"${response.url}" is ${response.status} ${response.statusText}`);
+				}
+
+				console.info(`【Fetch API】"${response.url}" is ${response.status} ${response.statusText}`);
+
 				const responseData = await response.json(); /* バリデートサービスからの返答結果を取得する */
 
 				const validateMessageList = responseData.messages;

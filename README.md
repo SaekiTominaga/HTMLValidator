@@ -1,6 +1,6 @@
 # HTML Validator
 
-Nu Html Checker を利用して HTML ページのチェックを行うユーザースクリプト。
+[The Nu Html Checker (v.Nu)](https://validator.github.io/validator/) を利用して HTML ページのチェックを行うユーザースクリプト。
 
 「✔ メッセージなし」「⚠ Info または Warning のみ」「❌ Error あり」によって3パターンのアイコンを表示し、さらに Info 以上のメッセージがあるときはアイコン押下でメッセージを表示します。
 
@@ -21,11 +21,19 @@ Nu Html Checker を利用して HTML ページのチェックを行うユーザ�
 ## 注意事項
 
 - デフォルトではブラウザで表示したすべてのページでチェックが行われてしまうので、負荷軽減のため @include や @match の設定を推奨します。
-- 複数のバリデートサービスでの比較が必要ない場合は、プログラム内の定数 CHECKER_URL を編集してください。
+
+## カスタマイズ
+
+|キー|解説|値の例|未指定時のデフォルト値|補足|
+|:-|:-|:-|:-|:-|
+|CHECKER_URL|バリデーターの URL リスト|["https://checker.html5.org/"]|["https://checker.html5.org/", "https://validator.w3.org/nu/", "https://validator.nu/"]||
+|FILTER_PATTERN|除外するエラー、警告メッセージの正規表現文字列|.\*Unicode Normalization.*\|.\*appears to be written in.\*|なし（空文字）|[参考ページ](https://github.com/validator/validator/wiki/Message-filtering#using-the---filterpattern-option)|
+
+例えば[Violentmonkey](https://violentmonkey.github.io/)ではスクリプトのインストール後、「値」のタブからキーを設定することができます。
 
 ## 対応環境
 
-Firefox 66.0 + [Violentmonkey 2.10.3](https://addons.mozilla.org/ja/firefox/addon/violentmonkey/) で動作確認していますが、 Chrome など他ブラウザでもたぶん動くと思います。
+Firefox 69.0.1 + [Violentmonkey 2.11.2](https://violentmonkey.github.io/) で動作確認していますが、 Chrome など他ブラウザでもたぶん動くと思います。
 
 ## おことわり
 
