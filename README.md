@@ -14,9 +14,9 @@
 
 ![画面キャプチャー（赤背景のブロック内に行数やメッセージが一覧表で表示されている）](https://user-images.githubusercontent.com/4138486/54666172-6a905980-4b2c-11e9-9559-dcba878f0a4a.png)
 
-## 動作サンプル
+## 動作デモ
 
-- [サンプルページ](https://saekitominaga.github.io/HTMLValidator/sample.html)
+- [デモページ](https://saekitominaga.github.io/HTMLValidator/demo.html)
 
 ## 注意事項
 
