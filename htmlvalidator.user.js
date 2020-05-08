@@ -4,12 +4,11 @@
 // @grant       GM_getValue
 // @description Nu Html Checker を利用して HTML ページのチェックを行うユーザースクリプト
 // @author      SaekiTominaga
-// @version     2.1.0
+// @version     2.1.1
 // ==/UserScript==
 (async () => {
 	/* バリデーターの URL リスト（上から順にアクセスを試みる） */
 	const CHECKER_URL = [
-		'https://checker.html5.org/',
 		'https://validator.w3.org/nu/',
 		'https://validator.nu/'
 	];
