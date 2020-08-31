@@ -4,17 +4,26 @@
 // @grant       GM_getValue
 // @description Nu Html Checker を利用して HTML ページのチェックを行うユーザースクリプト
 // @author      SaekiTominaga
-// @version     2.1.1
+// @version     2.2.0
 // ==/UserScript==
 (async () => {
 	/* バリデーターの URL リスト（上から順にアクセスを試みる） */
 	const CHECKER_URL = [
-		'https://validator.w3.org/nu/',
-		'https://validator.nu/'
+		'https://validator.w3.org/nu/', // 2019年4月下旬以降、それまでの checker.html5.org に代わって WHATWG のサイトからリンクされているので、これが事実上の公式と言ってよさそう
+		'https://validator.nu/',
 	];
 
 	/* 除外するエラー、警告メッセージの正規表現文字列 https://github.com/validator/validator/wiki/Message-filtering#using-the---filterpattern-option */
 	const FILTER_PATTERN = '';
+
+	/* バリデートを行うページの MIME タイプ（ 'text/html; charset=utf-8' のような引数指定は不可） */
+	const TARGET_MIME = [
+		'text/html',
+		'application/xhtml+xml',
+	];
+
+	/* Console に表示する当機能名 */
+	const CONSOLE_TITLE = '【HTML Validator】';
 
 	/* クラス名の接頭辞 */
 	const CLASSNAME_PLEFIX = 'htmlvalidator-';
@@ -33,24 +42,24 @@
 
 	/* CSS */
 	const CSS = `
-		.${CLASSNAME_PLEFIX}icon-box,
-		.${CLASSNAME_PLEFIX}validate-box {
+		.${CLASSNAME_PLEFIX}icon-area,
+		.${CLASSNAME_PLEFIX}validate-area {
 			all: initial;
 		}
 
-		.${CLASSNAME_PLEFIX}icon-box :focus,
-		.${CLASSNAME_PLEFIX}validate-box :focus {
+		.${CLASSNAME_PLEFIX}icon-area :focus,
+		.${CLASSNAME_PLEFIX}validate-area :focus {
 			outline: 1px solid #4d90fe;
 			outline-offset: 2px;
 		}
 
-		.${CLASSNAME_PLEFIX}icon-box ::-moz-focus-inner,
-		.${CLASSNAME_PLEFIX}validate-box ::-moz-focus-inner {
+		.${CLASSNAME_PLEFIX}icon-area ::-moz-focus-inner,
+		.${CLASSNAME_PLEFIX}validate-area ::-moz-focus-inner {
 			padding: 0;
 			border: none;
 		} /* for Firefox */
 
-		.${CLASSNAME_PLEFIX}icon-box {
+		.${CLASSNAME_PLEFIX}icon-area {
 		}
 
 		.${CLASSNAME_PLEFIX}icon {
@@ -75,7 +84,7 @@
 			width: 40px;
 		}
 
-		.${CLASSNAME_PLEFIX}validate-box {
+		.${CLASSNAME_PLEFIX}validate-area {
 			padding: 1em;
 			border: 1px solid #f00;
 			box-sizing: border-box;
@@ -92,7 +101,7 @@
 			z-index: 2147483647;
 		}
 
-		.${CLASSNAME_PLEFIX}validate-box[hidden] {
+		.${CLASSNAME_PLEFIX}validate-area[hidden] {
 			display: none;
 		}
 
@@ -114,6 +123,7 @@
 		.${CLASSNAME_PLEFIX}list td {
 			padding: .25em .5em;
 			border: 1px solid #000;
+			color: #000;
 			background: #fff;
 		}
 
@@ -165,7 +175,22 @@
 			method: 'GET',
 			credentials: 'same-origin'
 		});
+		const contentType = response.headers.get('Content-Type');
+		const contentTypeSimple = contentType.split(';', 1)[0].trim(); // 引数を省略した　MIME タイプ
+		if (!TARGET_MIME.includes(contentTypeSimple)) {
+			console.warn(CONSOLE_TITLE, `No processing because this is not an HTML resource. (${contentType})`);
+			return;
+		}
+
 		const sourceCode = await response.text();
+
+		const htmlvalidatorRootElement = document.createElement('div');
+		htmlvalidatorRootElement.className = `${CLASSNAME_PLEFIX}root`;
+		htmlvalidatorRootElement.lang = 'en';
+		if (contentTypeSimple === 'application/xhtml+xml') {
+			htmlvalidatorRootElement.setAttribute('xml:lang', 'en');
+		}
+		document.body.appendChild(htmlvalidatorRootElement);
 
 		/* スタイルを CSS で設定 */
 		const styleElement = document.createElement('style');
@@ -174,12 +199,8 @@
 
 		/* バリデート結果ボタン */
 		const iconButtonWrapperElement = document.createElement('div');
-		iconButtonWrapperElement.className = `${CLASSNAME_PLEFIX}icon-box`;
-		iconButtonWrapperElement.lang = 'en';
-		if (document.documentElement.hasAttribute('xmlns')) { // TODO 本当は Content-Type で判定すべき
-			iconButtonWrapperElement.setAttribute('xml:lang', 'en');
-		}
-		document.body.appendChild(iconButtonWrapperElement);
+		iconButtonWrapperElement.className = `${CLASSNAME_PLEFIX}icon-area`;
+		htmlvalidatorRootElement.appendChild(iconButtonWrapperElement);
 
 		const iconButtonElement = document.createElement('button');
 		iconButtonElement.type = 'button';
@@ -196,12 +217,8 @@
 		const errorBoxElement = document.createElement('div');
 		errorBoxElement.hidden = true;
 		errorBoxElement.tabIndex = -1;
-		errorBoxElement.lang = 'en';
-		if (document.documentElement.hasAttribute('xmlns')) { // TODO 本当は Content-Type で判定すべき
-			errorBoxElement.setAttribute('xml:lang', 'en');
-		}
-		errorBoxElement.className = `${CLASSNAME_PLEFIX}validate-box`;
-		document.body.appendChild(errorBoxElement);
+		errorBoxElement.className = `${CLASSNAME_PLEFIX}validate-area`;
+		htmlvalidatorRootElement.appendChild(errorBoxElement);
 
 		/* バリデートエラー表示エリアの閉じるボタン */
 		const closeButtonElement = document.createElement('button');
@@ -243,7 +260,7 @@
 					throw new Error(`"${response.url}" is ${response.status} ${response.statusText}`);
 				}
 
-				console.info(`【Fetch API】"${response.url}" is ${response.status} ${response.statusText}`);
+				console.info(CONSOLE_TITLE, `"${response.url}" is ${response.status} ${response.statusText}`);
 
 				const responseData = await response.json(); /* バリデートサービスからの返答結果を取得する */
 
@@ -337,6 +354,6 @@
 			}
 		}
 	} catch (error) {
-		console.error(error.message);
+		console.error(CONSOLE_TITLE, error.message);
 	}
 })();
