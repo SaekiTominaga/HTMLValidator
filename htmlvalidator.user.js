@@ -4,13 +4,12 @@
 // @grant       GM_getValue
 // @description Nu Html Checker を利用して HTML ページのチェックを行うユーザースクリプト
 // @author      SaekiTominaga
-// @version     2.2.0
+// @version     2.2.1
 // ==/UserScript==
 (async () => {
 	/* バリデーターの URL リスト（上から順にアクセスを試みる） */
 	const CHECKER_URL = [
-		'https://validator.w3.org/nu/', // 2019年4月下旬以降、それまでの checker.html5.org に代わって WHATWG のサイトからリンクされているので、これが事実上の公式と言ってよさそう
-		'https://validator.nu/',
+		'https://validator.w3.org/nu/',
 	];
 
 	/* 除外するエラー、警告メッセージの正規表現文字列 https://github.com/validator/validator/wiki/Message-filtering#using-the---filterpattern-option */

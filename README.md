@@ -26,7 +26,7 @@
 
 | キー | 解説 | 設定例 | 未指定時のデフォルト値 | 補足 |
 |:-|:-|:-|:-|:-|
-| CHECKER_URL | バリデーターの URL リスト | ['https://validator.w3.org/nu/'] | ['https://validator.w3.org/nu/', 'https://validator.nu/'] | |
+| CHECKER_URL | バリデーターの URL リスト | ['https://validator.w3.org/nu/', 'https://validator.nu/'] | ['https://validator.w3.org/nu/'] | |
 | FILTER_PATTERN | 除外するエラー、警告メッセージの正規表現文字列 | .\*Unicode Normalization.*\|.\*appears to be written in.\* | なし（空文字） | [参考ページ](https://github.com/validator/validator/wiki/Message-filtering#using-the---filterpattern-option) |
 | TARGET_MIME | バリデートを行うページの MIME タイプ（ 'text/html; charset=utf-8' のような引数指定は不可） | ['text/html'] | ['text/html', 'application/xhtml+xml'] | |
 | CONSOLE_TITLE | Console に表示する当機能名 | 任意の文字列 | '【HTML Validator】' | |
@@ -36,7 +36,7 @@
 
 ## 対応環境
 
-Firefox 80 + [Violentmonkey 2.12.7](https://violentmonkey.github.io/) で動作確認しています。 Chrome などの他ブラウザでもたぶん動くと思います。
+Firefox 81 + [Violentmonkey 2.12.7](https://violentmonkey.github.io/) で動作確認しています。 Chrome などの他ブラウザでもたぶん動くと思います。
 
 ## おことわり
 
