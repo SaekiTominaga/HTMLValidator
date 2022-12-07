@@ -16,7 +16,7 @@
 
 ## 動作デモ
 
-- [デモページ](https://saekitominaga.github.io/HTMLValidator/demo.html)
+- [デモページ](https://saekitominaga.github.io/userscript-html-validator/demo.html)
 
 ## 注意事項
 
